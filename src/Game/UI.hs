@@ -4,14 +4,13 @@ import Brick
 import Brick.BChan
 import Brick.Widgets.Border
 import Brick.Widgets.Center
-import Brick.Widgets.Core()
+import Brick.Widgets.Core ()
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad (forever)
-import qualified Graphics.Vty as V
-import Graphics.Vty.CrossPlatform (mkVty)
 import Data.Functor (void)
 import Game.Core
-import qualified Game.Core as Core
+import qualified Graphics.Vty as V
+import Graphics.Vty.CrossPlatform (mkVty)
 
 -- | Custom events
 data CustomEvent = Tick
@@ -54,19 +53,19 @@ handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = do
 handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
   -- Record Up arrow press
   st <- get
-  put $ st {stDirection = Just Core.Up}
+  put $ st {stDirection = Just GoUp}
 handleEvent (VtyEvent (V.EvKey V.KDown [])) = do
   -- Record Down arrow press
   st <- get
-  put $ st {stDirection = Just Core.Down}
+  put $ st {stDirection = Just GoDown}
 handleEvent (VtyEvent (V.EvKey V.KLeft [])) = do
   -- Record Left arrow press
   st <- get
-  put $ st {stDirection = Just Core.Left}
+  put $ st {stDirection = Just GoLeft}
 handleEvent (VtyEvent (V.EvKey V.KRight [])) = do
   -- Record Right arrow press
   st <- get
-  put $ st {stDirection = Just Core.Right}
+  put $ st {stDirection = Just GoRight}
 handleEvent _ = do
   -- Ignore other events
   pure ()
@@ -84,7 +83,7 @@ runGame = do
   -- Fork thread to generate tick events every second
   _ <- forkIO $ forever $ do
     writeBChan eventChan Tick
-    threadDelay 1000000  -- 1 second delay
+    threadDelay 1000000 -- 1 second delay
 
   -- Initialize Vty
   let buildVty = mkVty V.defaultConfig
