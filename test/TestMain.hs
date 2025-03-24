@@ -30,7 +30,10 @@ testStep =
                 "Non straight snake"
                 (step (initialState {snakePosition = [(0, 0), (0, 1), (1, 1), (1, 2)]}))
                 (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (1, 1), (1, 2), (1, 3)]})
-          ]
+          ],
+      TestLabel "Going down" $
+        TestList
+          [] -- TODO: Add tests for going down
     ]
 
 -- Group all tests together
