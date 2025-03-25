@@ -7,7 +7,6 @@ import Brick.Widgets.Center
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad (forever)
 import Data.Functor (void)
-import Data.List (transpose)
 import Game.Core
 import qualified Graphics.Vty as V
 import Graphics.Vty.CrossPlatform (mkVty)
@@ -16,7 +15,7 @@ import Graphics.Vty.CrossPlatform (mkVty)
 data CustomEvent = Tick
 
 -- | App definition
-app :: App St CustomEvent ()
+app :: App Snake CustomEvent ()
 app =
   App
     { appDraw = drawUI,
@@ -27,23 +26,20 @@ app =
     }
 
 -- | UI rendering function
-drawUI :: St -> [Widget ()]
+drawUI :: Snake -> [Widget ()]
 drawUI st = [ui]
   where
     ui =
       center $
         border $
-          vBox
-            [ padAll 1 $ str $ "Counter: " ++ show (stCounter st),
-              padAll 1 $ str $ "Direction: " ++ maybe "None" show (stDirection st),
-              padAll 1 $ str "Press Esc or q to exit"
-            ]
+          str $
+            renderLevel st
 
 -- | Event handler
-handleEvent :: BrickEvent () CustomEvent -> EventM () St ()
+handleEvent :: BrickEvent () CustomEvent -> EventM () Snake ()
 handleEvent (AppEvent Tick) = do
   st <- get
-  put $ st {stCounter = stCounter st + 1}
+  put $ step st
 handleEvent (VtyEvent (V.EvKey V.KEsc [])) = do
   -- Exit on Esc key
   halt
@@ -53,26 +49,22 @@ handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = do
 handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
   -- Record Up arrow press
   st <- get
-  put $ st {stDirection = Just GoUp}
+  put $ st {snakeDirection = GoUp}
 handleEvent (VtyEvent (V.EvKey V.KDown [])) = do
   -- Record Down arrow press
   st <- get
-  put $ st {stDirection = Just GoDown}
+  put $ st {snakeDirection = GoDown}
 handleEvent (VtyEvent (V.EvKey V.KLeft [])) = do
   -- Record Left arrow press
   st <- get
-  put $ st {stDirection = Just GoLeft}
+  put $ st {snakeDirection = GoLeft}
 handleEvent (VtyEvent (V.EvKey V.KRight [])) = do
   -- Record Right arrow press
   st <- get
-  put $ st {stDirection = Just GoRight}
+  put $ st {snakeDirection = GoRight}
 handleEvent _ = do
   -- Ignore other events
   pure ()
-
--- | Initial app state
-initialState :: St
-initialState = St {stCounter = 0, stDirection = Nothing}
 
 -- | Main function
 runGame :: IO ()
@@ -83,14 +75,15 @@ runGame = do
   -- Fork thread to generate tick events every second
   _ <- forkIO $ forever $ do
     writeBChan eventChan Tick
-    threadDelay 1000000 -- 1 second delay
+    -- threadDelay 1000000 -- 1 second delay
+    threadDelay 400000 -- 0.4 second delay
 
   -- Initialize Vty
   let buildVty = mkVty V.defaultConfig
   initialVty <- buildVty
 
   -- Run the Brick app
-  void $ customMain initialVty buildVty (Just eventChan) app Game.UI.initialState
+  void $ customMain initialVty buildVty (Just eventChan) app (initialState {snakePosition = [(0, 0), (0, 1), (1, 1), (1, 2)], screenSize = (60, 30)})
 
 renderLevel :: Snake -> String
 renderLevel (Snake {screenSize = (width, height), snakePosition = position}) =

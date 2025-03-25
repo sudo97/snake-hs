@@ -30,7 +30,7 @@ step s@(Snake {snakeDirection = GoUp, snakePosition = position, screenSize = (_,
 step s = s
 
 -- | App state
-data St = St
-  { stCounter :: Int,
-    stDirection :: Maybe SnakeDirection
-  }
+-- data St = St
+--   { stCounter :: Int,
+--     stDirection :: Maybe SnakeDirection
+--   }
