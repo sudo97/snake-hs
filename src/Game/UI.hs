@@ -4,10 +4,10 @@ import Brick
 import Brick.BChan
 import Brick.Widgets.Border
 import Brick.Widgets.Center
-import Brick.Widgets.Core ()
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad (forever)
 import Data.Functor (void)
+import Data.List (transpose)
 import Game.Core
 import qualified Graphics.Vty as V
 import Graphics.Vty.CrossPlatform (mkVty)
@@ -91,3 +91,10 @@ runGame = do
 
   -- Run the Brick app
   void $ customMain initialVty buildVty (Just eventChan) app Game.UI.initialState
+
+renderLevel :: Snake -> String
+renderLevel (Snake {screenSize = (width, height), snakePosition = position}) =
+  unlines $ reverse [renderLine y | y <- [0 .. height - 1]]
+  where
+    renderLine y = [renderCell (x, y) | x <- [0 .. width - 1]]
+    renderCell (x, y) = if (x, y) `elem` position then 'x' else ' '

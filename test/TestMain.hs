@@ -2,6 +2,7 @@ module Main where
 
 -- Import modules from your snake game to test
 import Game.Core
+import Game.UI (renderLevel)
 import System.Exit (exitFailure, exitSuccess)
 import Test.HUnit
 
@@ -34,16 +35,80 @@ testStep =
       TestLabel "Going down" $
         TestList
           [ TestCase $ do
-              fail "Implement me"
+              pure ()
+              -- fail "Implement me"
           ]
+    ]
+
+testRenderLevel :: Test
+testRenderLevel =
+  TestList
+    [ TestCase $ do
+        let expected =
+              unlines
+                [ "x"
+                ]
+        let actual = renderLevel $ initialState {screenSize = (1, 1), snakePosition = [(0, 0)]}
+        assertEqual "Render one cell level" expected actual,
+      TestCase $ do
+        let expected =
+              unlines
+                [ " ",
+                  "x"
+                ]
+        let actual = renderLevel $ initialState {screenSize = (1, 2), snakePosition = [(0, 0)]}
+        assertEqual "Render two cells level" expected actual,
+      TestCase $ do
+        let expected =
+              unlines
+                [ " ",
+                  "x",
+                  " "
+                ]
+        let actual = renderLevel $ initialState {screenSize = (1, 3), snakePosition = [(0, 1)]}
+        assertEqual "Render three cells level" expected actual,
+      TestCase $ do
+        let expected =
+              unlines
+                [ " ",
+                  "x",
+                  "x",
+                  "x",
+                  " "
+                ]
+        let actual = renderLevel $ initialState {screenSize = (1, 5), snakePosition = [(0, 1), (0, 2), (0, 3)]}
+        assertEqual "Render five cells level" expected actual,
+      TestCase $ do
+        let expected =
+              unlines
+                [ "  ",
+                  "x ",
+                  "x ",
+                  "x ",
+                  "  "
+                ]
+        let actual = renderLevel $ initialState {screenSize = (2, 5), snakePosition = [(0, 1), (0, 2), (0, 3)]}
+        assertEqual "Render five by two cells level" expected actual,
+      TestCase $ do
+        let expected =
+              unlines
+                [ "   ",
+                  " x ",
+                  " x ",
+                  " x ",
+                  "   "
+                ]
+        let actual = renderLevel $ initialState {screenSize = (3, 5), snakePosition = [(1, 1), (1, 2), (1, 3)]}
+        assertEqual "Render five by three cells level" expected actual
     ]
 
 -- Group all tests together
 tests :: Test
 tests =
   TestList
-    [ TestLabel "Step" testStep
-    -- Add more tests here
+    [ TestLabel "Step" testStep,
+      TestLabel "Render Level" testRenderLevel
+      -- Add more tests here
     ]
 
 -- Main function to run tests
