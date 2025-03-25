@@ -27,10 +27,13 @@ step s@(Snake {snakeDirection = GoUp, snakePosition = position, screenSize = (_,
             newLastItem = (x, if y + 1 >= height then 0 else y + 1)
          in tail' ++ [newLastItem]
     }
+step s@(Snake {snakeDirection = GoDown, snakePosition = position, screenSize = (_, height)}) =
+  s
+    { snakeDirection = GoDown,
+      snakePosition =
+        let tail' = drop 1 position
+            (x, y) = last position
+            newLastItem = (x, if y - 1 < 0 then height - 1 else y - 1)
+         in tail' ++ [newLastItem]
+    }
 step s = s
-
--- | App state
--- data St = St
---   { stCounter :: Int,
---     stDirection :: Maybe SnakeDirection
---   }

@@ -14,29 +14,41 @@ testStep =
           [ TestCase $ do
               assertEqual
                 "Step"
-                (step initialState)
-                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (0, 2), (0, 3)]}),
+                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (0, 2), (0, 3)]})
+                (step initialState),
             TestCase $ do
               assertEqual
                 "Step twice"
-                (step $ step initialState)
-                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 2), (0, 3), (0, 4)]}),
+                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 2), (0, 3), (0, 4)]})
+                (step $ step initialState),
             TestCase $ do
               assertEqual
                 "Over the edge"
-                (step (initialState {snakePosition = [(0, 27), (0, 28), (0, 29)]}))
-                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 28), (0, 29), (0, 0)]}),
+                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 28), (0, 29), (0, 0)]})
+                (step (initialState {snakePosition = [(0, 27), (0, 28), (0, 29)]})),
             TestCase $ do
               assertEqual
                 "Non straight snake"
-                (step (initialState {snakePosition = [(0, 0), (0, 1), (1, 1), (1, 2)]}))
                 (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (1, 1), (1, 2), (1, 3)]})
+                (step (initialState {snakePosition = [(0, 0), (0, 1), (1, 1), (1, 2)]}))
           ],
       TestLabel "Going down" $
         TestList
           [ TestCase $ do
-              pure ()
-              -- fail "Implement me"
+              assertEqual
+                "Step"
+                (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(0, 1), (0, 0), (0, 29)]})
+                (step initialState {snakePosition = [(0, 2), (0, 1), (0, 0)], snakeDirection = GoDown}),
+            TestCase $ do
+              assertEqual
+                "Step twice"
+                (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(0, 0), (0, 29), (0, 28)]})
+                (step $ step initialState {snakePosition = [(0, 2), (0, 1), (0, 0)], snakeDirection = GoDown}),
+            TestCase $ do
+              assertEqual
+                "Non straight snake"
+                (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(1, 1), (0, 1), (0, 0), (0, 29)]})
+                (step (initialState {snakePosition = [(1, 2), (1, 1), (0, 1), (0, 0)], snakeDirection = GoDown}))
           ]
     ]
 
