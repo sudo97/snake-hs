@@ -75,7 +75,6 @@ runGame = do
   -- Fork thread to generate tick events every second
   _ <- forkIO $ forever $ do
     writeBChan eventChan Tick
-    -- threadDelay 1000000 -- 1 second delay
     threadDelay 100000 -- 0.1 second delay
 
   -- Initialize Vty

@@ -1,7 +1,12 @@
 module Main where
 
--- Import modules from your snake game to test
 import Game.Core
+  ( Snake (..),
+    SnakeDirection (..),
+    changeDirection,
+    initialState,
+    step,
+  )
 import Game.UI (renderLevel)
 import System.Exit (exitFailure, exitSuccess)
 import Test.HUnit
