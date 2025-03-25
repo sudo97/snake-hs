@@ -18,22 +18,25 @@ initialState =
     }
 
 step :: Snake -> Snake
-step s@(Snake {snakeDirection = GoUp, snakePosition = position, screenSize = (_, height)}) =
+step s@(Snake {snakeDirection = dir, snakePosition = position, screenSize = (width, height)}) =
   s
-    { snakeDirection = GoUp,
-      snakePosition =
+    { snakePosition =
         let tail' = drop 1 position
             (x, y) = last position
-            newLastItem = (x, if y + 1 >= height then 0 else y + 1)
+            newLastItem = case dir of
+              GoUp -> (x, if y + 1 >= height then 0 else y + 1)
+              GoDown -> (x, if y - 1 < 0 then height - 1 else y - 1)
+              GoLeft -> (if x - 1 < 0 then width - 1 else x - 1, y)
+              GoRight -> (if x + 1 >= width then 0 else x + 1, y)
          in tail' ++ [newLastItem]
     }
-step s@(Snake {snakeDirection = GoDown, snakePosition = position, screenSize = (_, height)}) =
+
+changeDirection :: SnakeDirection -> Snake -> Snake
+changeDirection dir s@(Snake {snakeDirection = currentDir}) =
   s
-    { snakeDirection = GoDown,
-      snakePosition =
-        let tail' = drop 1 position
-            (x, y) = last position
-            newLastItem = (x, if y - 1 < 0 then height - 1 else y - 1)
-         in tail' ++ [newLastItem]
+    { snakeDirection = case currentDir of
+        GoUp -> if dir == GoDown then currentDir else dir
+        GoDown -> if dir == GoUp then currentDir else dir
+        GoLeft -> if dir == GoRight then currentDir else dir
+        GoRight -> if dir == GoLeft then currentDir else dir
     }
-step s = s

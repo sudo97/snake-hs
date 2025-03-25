@@ -49,19 +49,19 @@ handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = do
 handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
   -- Record Up arrow press
   st <- get
-  put $ st {snakeDirection = GoUp}
+  put $ step $ changeDirection GoUp st
 handleEvent (VtyEvent (V.EvKey V.KDown [])) = do
   -- Record Down arrow press
   st <- get
-  put $ st {snakeDirection = GoDown}
+  put $ step $ changeDirection GoDown st
 handleEvent (VtyEvent (V.EvKey V.KLeft [])) = do
   -- Record Left arrow press
   st <- get
-  put $ st {snakeDirection = GoLeft}
+  put $ step $ changeDirection GoLeft st
 handleEvent (VtyEvent (V.EvKey V.KRight [])) = do
   -- Record Right arrow press
   st <- get
-  put $ st {snakeDirection = GoRight}
+  put $ step $ changeDirection GoRight st
 handleEvent _ = do
   -- Ignore other events
   pure ()
@@ -76,14 +76,14 @@ runGame = do
   _ <- forkIO $ forever $ do
     writeBChan eventChan Tick
     -- threadDelay 1000000 -- 1 second delay
-    threadDelay 400000 -- 0.4 second delay
+    threadDelay 100000 -- 0.1 second delay
 
   -- Initialize Vty
   let buildVty = mkVty V.defaultConfig
   initialVty <- buildVty
 
   -- Run the Brick app
-  void $ customMain initialVty buildVty (Just eventChan) app (initialState {snakePosition = [(0, 0), (0, 1), (1, 1), (1, 2)], screenSize = (60, 30)})
+  void $ customMain initialVty buildVty (Just eventChan) app (initialState {snakePosition = [(0, x) | x <- [0 .. 6]], screenSize = (60, 30)})
 
 renderLevel :: Snake -> String
 renderLevel (Snake {screenSize = (width, height), snakePosition = position}) =

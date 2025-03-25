@@ -49,6 +49,22 @@ testStep =
                 "Non straight snake"
                 (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(1, 1), (0, 1), (0, 0), (0, 29)]})
                 (step (initialState {snakePosition = [(1, 2), (1, 1), (0, 1), (0, 0)], snakeDirection = GoDown}))
+          ],
+      TestLabel "Going left" $
+        TestList
+          [ TestCase $ do
+              assertEqual
+                "Step"
+                (Snake {screenSize = (30, 30), snakeDirection = GoLeft, snakePosition = [(1, 0), (0, 0), (29, 0)]})
+                (step initialState {snakePosition = [(2, 0), (1, 0), (0, 0)], snakeDirection = GoLeft})
+          ],
+      TestLabel "Going right" $
+        TestList
+          [ TestCase $ do
+              assertEqual
+                "Step"
+                (Snake {screenSize = (30, 30), snakeDirection = GoRight, snakePosition = [(1, 0), (1, 1), (2, 1)]})
+                (step initialState {snakePosition = [(0, 0), (1, 0), (1, 1)], snakeDirection = GoRight})
           ]
     ]
 
@@ -114,12 +130,38 @@ testRenderLevel =
         assertEqual "Render five by three cells level" expected actual
     ]
 
+testChangeDirection :: Test
+testChangeDirection =
+  TestList
+    [ TestCase $ do
+        assertEqual "Change direction Up -> Up is allowed" (initialState {snakeDirection = GoUp}) (changeDirection GoUp initialState)
+        assertEqual "Change direction Up -> Down not allowed" (initialState {snakeDirection = GoUp}) (changeDirection GoDown initialState)
+        assertEqual "Change direction Up -> Left is allowed" (initialState {snakeDirection = GoLeft}) (changeDirection GoLeft initialState)
+        assertEqual "Change direction Up -> Right is allowed" (initialState {snakeDirection = GoRight}) (changeDirection GoRight initialState),
+      TestCase $ do
+        assertEqual "Change direction Down -> Up is not allowed" (initialState {snakeDirection = GoDown}) (changeDirection GoUp (initialState {snakeDirection = GoDown}))
+        assertEqual "Change direction Down -> Down is allowed" (initialState {snakeDirection = GoDown}) (changeDirection GoDown (initialState {snakeDirection = GoDown}))
+        assertEqual "Change direction Down -> Left is allowed" (initialState {snakeDirection = GoLeft}) (changeDirection GoLeft (initialState {snakeDirection = GoDown}))
+        assertEqual "Change direction Down -> Right is allowed" (initialState {snakeDirection = GoRight}) (changeDirection GoRight (initialState {snakeDirection = GoDown})),
+      TestCase $ do
+        assertEqual "Change direction Left -> Up is allowed" (initialState {snakeDirection = GoUp}) (changeDirection GoUp (initialState {snakeDirection = GoLeft}))
+        assertEqual "Change direction Left -> Down is allowed" (initialState {snakeDirection = GoDown}) (changeDirection GoDown (initialState {snakeDirection = GoLeft}))
+        assertEqual "Change direction Left -> Left is allowed" (initialState {snakeDirection = GoLeft}) (changeDirection GoLeft (initialState {snakeDirection = GoLeft}))
+        assertEqual "Change direction Left -> Right is not allowed" (initialState {snakeDirection = GoLeft}) (changeDirection GoRight (initialState {snakeDirection = GoLeft})),
+      TestCase $ do
+        assertEqual "Change direction Right -> Up is allowed" (initialState {snakeDirection = GoUp}) (changeDirection GoUp (initialState {snakeDirection = GoRight}))
+        assertEqual "Change direction Right -> Down is allowed" (initialState {snakeDirection = GoDown}) (changeDirection GoDown (initialState {snakeDirection = GoRight}))
+        assertEqual "Change direction Right -> Left is not allowed" (initialState {snakeDirection = GoRight}) (changeDirection GoLeft (initialState {snakeDirection = GoRight}))
+        assertEqual "Change direction Right -> Right is allowed" (initialState {snakeDirection = GoRight}) (changeDirection GoRight (initialState {snakeDirection = GoRight}))
+    ]
+
 -- Group all tests together
 tests :: Test
 tests =
   TestList
     [ TestLabel "Step" testStep,
-      TestLabel "Render Level" testRenderLevel
+      TestLabel "Render Level" testRenderLevel,
+      TestLabel "Change Direction" testChangeDirection
       -- Add more tests here
     ]
 
