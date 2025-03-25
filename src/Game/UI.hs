@@ -82,11 +82,11 @@ runGame = do
   initialVty <- buildVty
 
   -- Run the Brick app
-  void $ customMain initialVty buildVty (Just eventChan) app (initialState {snakePosition = [(0, x) | x <- [0 .. 6]], screenSize = (60, 30)})
+  void $ customMain initialVty buildVty (Just eventChan) app (initialState {snakePosition = [(0, x) | x <- [0 .. 20]], screenSize = (60, 30)})
 
 renderLevel :: Snake -> String
 renderLevel (Snake {screenSize = (width, height), snakePosition = position}) =
   unlines $ reverse [renderLine y | y <- [0 .. height - 1]]
   where
     renderLine y = [renderCell (x, y) | x <- [0 .. width - 1]]
-    renderCell (x, y) = if (x, y) `elem` position then 'x' else ' '
+    renderCell pt = if pt `elem` position then 'x' else ' '
