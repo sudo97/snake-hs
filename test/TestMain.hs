@@ -33,7 +33,9 @@ testStep =
           ],
       TestLabel "Going down" $
         TestList
-          [] -- TODO: Add tests for going down
+          [ TestCase $ do
+              fail "Implement me"
+          ]
     ]
 
 -- Group all tests together
