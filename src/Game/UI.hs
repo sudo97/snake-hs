@@ -6,6 +6,7 @@ import Brick.Widgets.Border
 import Brick.Widgets.Center
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad (forever)
+import Control.Monad.IO.Class
 import Data.Functor (void)
 import Game.Core
 import qualified Graphics.Vty as V
@@ -39,7 +40,8 @@ drawUI st = [ui]
 handleEvent :: BrickEvent () CustomEvent -> EventM () Snake ()
 handleEvent (AppEvent Tick) = do
   st <- get
-  put $ step st
+  st' <- liftIO $ step st
+  put st'
 handleEvent (VtyEvent (V.EvKey V.KEsc [])) = do
   -- Exit on Esc key
   halt
@@ -49,19 +51,23 @@ handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = do
 handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
   -- Record Up arrow press
   st <- get
-  put $ step $ changeDirection GoUp st
+  st' <- liftIO $ step $ changeDirection GoUp st
+  put st'
 handleEvent (VtyEvent (V.EvKey V.KDown [])) = do
   -- Record Down arrow press
   st <- get
-  put $ step $ changeDirection GoDown st
+  st' <- liftIO $ step $ changeDirection GoDown st
+  put st'
 handleEvent (VtyEvent (V.EvKey V.KLeft [])) = do
   -- Record Left arrow press
   st <- get
-  put $ step $ changeDirection GoLeft st
+  st' <- liftIO $ step $ changeDirection GoLeft st
+  put st'
 handleEvent (VtyEvent (V.EvKey V.KRight [])) = do
   -- Record Right arrow press
   st <- get
-  put $ step $ changeDirection GoRight st
+  st' <- liftIO $ step $ changeDirection GoRight st
+  put st'
 handleEvent _ = do
   -- Ignore other events
   pure ()
