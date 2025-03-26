@@ -40,7 +40,7 @@ drawUI st = [ui]
 handleEvent :: BrickEvent () CustomEvent -> EventM () Snake ()
 handleEvent (AppEvent Tick) = do
   st <- get
-  st' <- liftIO $ step initialState' st
+  st' <- liftIO $ step' st
   put st'
 handleEvent (VtyEvent (V.EvKey V.KEsc [])) = do
   -- Exit on Esc key
@@ -51,22 +51,22 @@ handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = do
 handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
   -- Record Up arrow press
   st <- get
-  st' <- liftIO . step initialState' $ changeDirection GoUp st
+  st' <- liftIO . step' $ changeDirection GoUp st
   put st'
 handleEvent (VtyEvent (V.EvKey V.KDown [])) = do
   -- Record Down arrow press
   st <- get
-  st' <- liftIO . step initialState' $ changeDirection GoDown st
+  st' <- liftIO . step' $ changeDirection GoDown st
   put st'
 handleEvent (VtyEvent (V.EvKey V.KLeft [])) = do
   -- Record Left arrow press
   st <- get
-  st' <- liftIO . step initialState' $ changeDirection GoLeft st
+  st' <- liftIO . step' $ changeDirection GoLeft st
   put st'
 handleEvent (VtyEvent (V.EvKey V.KRight [])) = do
   -- Record Right arrow press
   st <- get
-  st' <- liftIO . step initialState' $ changeDirection GoRight st
+  st' <- liftIO . step' $ changeDirection GoRight st
   put st'
 handleEvent _ = do
   -- Ignore other events
@@ -102,3 +102,6 @@ renderLevel (Snake {screenSize = (width, height), snakePosition = position, snac
 
 initialState' :: Snake
 initialState' = initialState {snakePosition = [(0, x) | x <- [0 .. 2]], screenSize = (60, 30)}
+
+step' :: Snake -> IO Snake
+step' = step initialState'
