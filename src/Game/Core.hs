@@ -21,8 +21,8 @@ initialState =
       snackPosition = (15, 15)
     }
 
-step :: Snake -> IO Snake
-step s@(Snake {snakeDirection = dir, snakePosition = position, screenSize = (width, height), snackPosition = snack}) =
+step :: Snake -> Snake -> IO Snake
+step fallBackState s@(Snake {snakeDirection = dir, snakePosition = position, screenSize = (width, height), snackPosition = snack}) =
   do
     newSnackX <- randomRIO (0, width - 1)
     newSnackY <- randomRIO (0, height - 1)
@@ -37,10 +37,17 @@ step s@(Snake {snakeDirection = dir, snakePosition = position, screenSize = (wid
     let snackPos = if newLastItem == snack then newSnack else snack
     let snakePos = if newLastItem == snack then position ++ [newLastItem] else tail' ++ [newLastItem]
     pure $
-      s
-        { snakePosition = snakePos,
-          snackPosition = snackPos
-        }
+      if hasCollisions snakePos
+        then fallBackState
+        else
+          s
+            { snakePosition = snakePos,
+              snackPosition = snackPos
+            }
+
+hasCollisions :: [(Int, Int)] -> Bool
+hasCollisions [] = False
+hasCollisions (x : xs) = x `elem` xs || hasCollisions xs
 
 changeDirection :: SnakeDirection -> Snake -> Snake
 changeDirection dir s@(Snake {snakeDirection = currentDir}) =

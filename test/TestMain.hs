@@ -17,25 +17,25 @@ testStep =
     [ TestLabel "Going up" $
         TestList
           [ TestCase $ do
-              result <- step initialState
+              result <- step undefined initialState
               assertEqual
                 "Step"
                 (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (0, 2), (0, 3)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
-              result <- step initialState >>= step
+              result <- step undefined initialState >>= step undefined
               assertEqual
                 "Step twice"
                 (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 2), (0, 3), (0, 4)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
-              result <- step (initialState {snakePosition = [(0, 27), (0, 28), (0, 29)]})
+              result <- step undefined (initialState {snakePosition = [(0, 27), (0, 28), (0, 29)]})
               assertEqual
                 "Over the edge"
                 (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 28), (0, 29), (0, 0)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
-              result <- step (initialState {snakePosition = [(0, 0), (0, 1), (1, 1), (1, 2)]})
+              result <- step undefined (initialState {snakePosition = [(0, 0), (0, 1), (1, 1), (1, 2)]})
               assertEqual
                 "Non straight snake"
                 (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (1, 1), (1, 2), (1, 3)], snackPosition = (15, 15)})
@@ -44,19 +44,19 @@ testStep =
       TestLabel "Going down" $
         TestList
           [ TestCase $ do
-              result <- step initialState {snakePosition = [(0, 2), (0, 1), (0, 0)], snakeDirection = GoDown}
+              result <- step undefined (initialState {snakePosition = [(0, 2), (0, 1), (0, 0)], snakeDirection = GoDown})
               assertEqual
                 "Step"
                 (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(0, 1), (0, 0), (0, 29)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
-              result <- step initialState {snakePosition = [(0, 2), (0, 1), (0, 0)], snakeDirection = GoDown} >>= step
+              result <- step undefined (initialState {snakePosition = [(0, 2), (0, 1), (0, 0)], snakeDirection = GoDown}) >>= step undefined
               assertEqual
                 "Step twice"
                 (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(0, 0), (0, 29), (0, 28)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
-              result <- step (initialState {snakePosition = [(1, 2), (1, 1), (0, 1), (0, 0)], snakeDirection = GoDown})
+              result <- step undefined (initialState {snakePosition = [(1, 2), (1, 1), (0, 1), (0, 0)], snakeDirection = GoDown})
               assertEqual
                 "Non straight snake"
                 (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(1, 1), (0, 1), (0, 0), (0, 29)], snackPosition = (15, 15)})
@@ -65,7 +65,7 @@ testStep =
       TestLabel "Going left" $
         TestList
           [ TestCase $ do
-              result <- step initialState {snakePosition = [(2, 0), (1, 0), (0, 0)], snakeDirection = GoLeft}
+              result <- step undefined (initialState {snakePosition = [(2, 0), (1, 0), (0, 0)], snakeDirection = GoLeft})
               assertEqual
                 "Step"
                 (Snake {screenSize = (30, 30), snakeDirection = GoLeft, snakePosition = [(1, 0), (0, 0), (29, 0)], snackPosition = (15, 15)})
@@ -74,7 +74,7 @@ testStep =
       TestLabel "Going right" $
         TestList
           [ TestCase $ do
-              result <- step initialState {snakePosition = [(0, 0), (1, 0), (1, 1)], snakeDirection = GoRight}
+              result <- step undefined (initialState {snakePosition = [(0, 0), (1, 0), (1, 1)], snakeDirection = GoRight})
               assertEqual
                 "Step"
                 (Snake {screenSize = (30, 30), snakeDirection = GoRight, snakePosition = [(1, 0), (1, 1), (2, 1)], snackPosition = (15, 15)})
@@ -83,7 +83,7 @@ testStep =
       TestLabel "Eating and growing" $
         TestList
           [ TestCase $ do
-              result <- step initialState {snakePosition = [(0, 0), (0, 1), (0, 2)], snackPosition = (0, 3)}
+              result <- step undefined (initialState {snakePosition = [(0, 0), (0, 1), (0, 2)], snackPosition = (0, 3)})
               assertEqual
                 "Step"
                 [(0, 0), (0, 1), (0, 2), (0, 3)]
@@ -95,6 +95,12 @@ testStep =
                 else do
                   let (x, y) = snackPosition result
                   assertBool "Snack is within the screen" (x >= 0 && x < 30 && y >= 0 && y < 30)
+          ],
+      TestLabel "Collisions" $
+        TestList
+          [ TestCase $ do
+              result <- step initialState (initialState {snakePosition = [(0, 0), (0, 1), (0, 2), (1, 2), (1, 1)], snakeDirection = GoLeft})
+              assertEqual "Step" initialState result
           ]
     ]
 
