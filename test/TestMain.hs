@@ -79,6 +79,15 @@ testStep =
                 "Step"
                 (Snake {screenSize = (30, 30), snakeDirection = GoRight, snakePosition = [(1, 0), (1, 1), (2, 1)], snackPosition = (15, 15)})
                 result
+          ],
+      TestLabel "Eating and growing" $
+        TestList
+          [ TestCase $ do
+              result <- step initialState {snakePosition = [(0, 0), (0, 1), (0, 2)], snackPosition = (0, 3)}
+              assertEqual
+                "Step"
+                [(0, 0), (0, 1), (0, 2), (0, 3)]
+                (snakePosition result)
           ]
     ]
 

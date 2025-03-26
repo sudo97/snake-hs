@@ -88,7 +88,7 @@ runGame = do
   initialVty <- buildVty
 
   -- Run the Brick app
-  void $ customMain initialVty buildVty (Just eventChan) app (initialState {snakePosition = [(0, x) | x <- [0 .. 20]], screenSize = (60, 30)})
+  void $ customMain initialVty buildVty (Just eventChan) app (initialState {snakePosition = [(0, x) | x <- [0 .. 2]], screenSize = (60, 30)})
 
 renderLevel :: Snake -> String
 renderLevel (Snake {screenSize = (width, height), snakePosition = position, snackPosition = snack}) =
