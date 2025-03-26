@@ -5,7 +5,8 @@ data SnakeDirection = GoUp | GoDown | GoLeft | GoRight deriving (Show, Eq)
 data Snake = Snake
   { screenSize :: (Int, Int),
     snakeDirection :: SnakeDirection,
-    snakePosition :: [(Int, Int)]
+    snakePosition :: [(Int, Int)],
+    snackPosition :: (Int, Int)
   }
   deriving (Show, Eq)
 
@@ -14,7 +15,8 @@ initialState =
   Snake
     { screenSize = (30, 30),
       snakeDirection = GoUp,
-      snakePosition = [(0, 0), (0, 1), (0, 2)]
+      snakePosition = [(0, 0), (0, 1), (0, 2)],
+      snackPosition = (15, 15)
     }
 
 step :: Snake -> IO Snake

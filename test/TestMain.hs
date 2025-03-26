@@ -20,25 +20,25 @@ testStep =
               result <- step initialState
               assertEqual
                 "Step"
-                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (0, 2), (0, 3)]})
+                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (0, 2), (0, 3)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
               result <- step initialState >>= step
               assertEqual
                 "Step twice"
-                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 2), (0, 3), (0, 4)]})
+                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 2), (0, 3), (0, 4)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
               result <- step (initialState {snakePosition = [(0, 27), (0, 28), (0, 29)]})
               assertEqual
                 "Over the edge"
-                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 28), (0, 29), (0, 0)]})
+                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 28), (0, 29), (0, 0)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
               result <- step (initialState {snakePosition = [(0, 0), (0, 1), (1, 1), (1, 2)]})
               assertEqual
                 "Non straight snake"
-                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (1, 1), (1, 2), (1, 3)]})
+                (Snake {screenSize = (30, 30), snakeDirection = GoUp, snakePosition = [(0, 1), (1, 1), (1, 2), (1, 3)], snackPosition = (15, 15)})
                 result
           ],
       TestLabel "Going down" $
@@ -47,19 +47,19 @@ testStep =
               result <- step initialState {snakePosition = [(0, 2), (0, 1), (0, 0)], snakeDirection = GoDown}
               assertEqual
                 "Step"
-                (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(0, 1), (0, 0), (0, 29)]})
+                (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(0, 1), (0, 0), (0, 29)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
               result <- step initialState {snakePosition = [(0, 2), (0, 1), (0, 0)], snakeDirection = GoDown} >>= step
               assertEqual
                 "Step twice"
-                (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(0, 0), (0, 29), (0, 28)]})
+                (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(0, 0), (0, 29), (0, 28)], snackPosition = (15, 15)})
                 result,
             TestCase $ do
               result <- step (initialState {snakePosition = [(1, 2), (1, 1), (0, 1), (0, 0)], snakeDirection = GoDown})
               assertEqual
                 "Non straight snake"
-                (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(1, 1), (0, 1), (0, 0), (0, 29)]})
+                (Snake {screenSize = (30, 30), snakeDirection = GoDown, snakePosition = [(1, 1), (0, 1), (0, 0), (0, 29)], snackPosition = (15, 15)})
                 result
           ],
       TestLabel "Going left" $
@@ -68,7 +68,7 @@ testStep =
               result <- step initialState {snakePosition = [(2, 0), (1, 0), (0, 0)], snakeDirection = GoLeft}
               assertEqual
                 "Step"
-                (Snake {screenSize = (30, 30), snakeDirection = GoLeft, snakePosition = [(1, 0), (0, 0), (29, 0)]})
+                (Snake {screenSize = (30, 30), snakeDirection = GoLeft, snakePosition = [(1, 0), (0, 0), (29, 0)], snackPosition = (15, 15)})
                 result
           ],
       TestLabel "Going right" $
@@ -77,7 +77,7 @@ testStep =
               result <- step initialState {snakePosition = [(0, 0), (1, 0), (1, 1)], snakeDirection = GoRight}
               assertEqual
                 "Step"
-                (Snake {screenSize = (30, 30), snakeDirection = GoRight, snakePosition = [(1, 0), (1, 1), (2, 1)]})
+                (Snake {screenSize = (30, 30), snakeDirection = GoRight, snakePosition = [(1, 0), (1, 1), (2, 1)], snackPosition = (15, 15)})
                 result
           ]
     ]
@@ -141,7 +141,18 @@ testRenderLevel =
                   "   "
                 ]
         let actual = renderLevel $ initialState {screenSize = (3, 5), snakePosition = [(1, 1), (1, 2), (1, 3)]}
-        assertEqual "Render five by three cells level" expected actual
+        assertEqual "Render five by three cells level" expected actual,
+      TestCase $ do
+        let expected =
+              unlines
+                [ "   ",
+                  " o ",
+                  "   ",
+                  " x ",
+                  " x "
+                ]
+        let actual = renderLevel $ initialState {screenSize = (3, 5), snakePosition = [(1, 0), (1, 1)], snackPosition = (1, 3)}
+        assertEqual "Render five by three cells level with snack" expected actual
     ]
 
 testChangeDirection :: Test

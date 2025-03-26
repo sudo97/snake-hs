@@ -91,8 +91,11 @@ runGame = do
   void $ customMain initialVty buildVty (Just eventChan) app (initialState {snakePosition = [(0, x) | x <- [0 .. 20]], screenSize = (60, 30)})
 
 renderLevel :: Snake -> String
-renderLevel (Snake {screenSize = (width, height), snakePosition = position}) =
+renderLevel (Snake {screenSize = (width, height), snakePosition = position, snackPosition = snack}) =
   unlines $ reverse [renderLine y | y <- [0 .. height - 1]]
   where
     renderLine y = [renderCell (x, y) | x <- [0 .. width - 1]]
-    renderCell pt = if pt `elem` position then 'x' else ' '
+    renderCell pt
+      | pt `elem` position = 'x'
+      | pt == snack = 'o'
+      | otherwise = ' '
