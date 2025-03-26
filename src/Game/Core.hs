@@ -1,5 +1,7 @@
 module Game.Core where
 
+import System.Random (randomRIO)
+
 data SnakeDirection = GoUp | GoDown | GoLeft | GoRight deriving (Show, Eq)
 
 data Snake = Snake
@@ -22,21 +24,22 @@ initialState =
 step :: Snake -> IO Snake
 step s@(Snake {snakeDirection = dir, snakePosition = position, screenSize = (width, height), snackPosition = snack}) =
   do
+    newSnackX <- randomRIO (0, width - 1)
+    newSnackY <- randomRIO (0, height - 1)
+    let newSnack = (newSnackX, newSnackY)
+    let tail' = drop 1 position
+        (x, y) = last position
+        newLastItem = case dir of
+          GoUp -> (x, if y + 1 >= height then 0 else y + 1)
+          GoDown -> (x, if y - 1 < 0 then height - 1 else y - 1)
+          GoLeft -> (if x - 1 < 0 then width - 1 else x - 1, y)
+          GoRight -> (if x + 1 >= width then 0 else x + 1, y)
+    let snackPos = if newLastItem == snack then newSnack else snack
+    let snakePos = if newLastItem == snack then position ++ [newLastItem] else tail' ++ [newLastItem]
     pure $
       s
-        { snakePosition =
-            let tail' = drop 1 position
-                (x, y) = last position
-                newLastItem = case dir of
-                  GoUp -> (x, if y + 1 >= height then 0 else y + 1)
-                  GoDown -> (x, if y - 1 < 0 then height - 1 else y - 1)
-                  GoLeft -> (if x - 1 < 0 then width - 1 else x - 1, y)
-                  GoRight -> (if x + 1 >= width then 0 else x + 1, y)
-             in if newLastItem == snack
-                  then
-                    position ++ [newLastItem]
-                  else
-                    tail' ++ [newLastItem]
+        { snakePosition = snakePos,
+          snackPosition = snackPos
         }
 
 changeDirection :: SnakeDirection -> Snake -> Snake

@@ -71,7 +71,9 @@ library
                       brick,
                       vty,
                       mtl,
-                      vty-crossplatform
+                      vty-crossplatform,
+                      random
+
 
     -- Directories containing source files.
     hs-source-dirs:   src

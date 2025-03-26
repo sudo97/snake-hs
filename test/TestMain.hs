@@ -88,6 +88,13 @@ testStep =
                 "Step"
                 [(0, 0), (0, 1), (0, 2), (0, 3)]
                 (snakePosition result)
+              if snackPosition result == (0, 3)
+                then do
+                  print $ snackPosition result
+                  assertFailure "Snack is eaten"
+                else do
+                  let (x, y) = snackPosition result
+                  assertBool "Snack is within the screen" (x >= 0 && x < 30 && y >= 0 && y < 30)
           ]
     ]
 
