@@ -24,9 +24,7 @@ initialState =
 step :: Snake -> Snake -> IO Snake
 step fallBackState s@(Snake {snakeDirection = dir, snakePosition = position, screenSize = (width, height), snackPosition = snack}) =
   do
-    newSnackX <- randomRIO (0, width - 1)
-    newSnackY <- randomRIO (0, height - 1)
-    let newSnack = (newSnackX, newSnackY)
+    newSnack <- (,) <$> randomRIO (0, width - 1) <*> randomRIO (0, height - 1)
     let tail' = drop 1 position
         (x, y) = last position
         newLastItem = case dir of
@@ -40,21 +38,16 @@ step fallBackState s@(Snake {snakeDirection = dir, snakePosition = position, scr
       if hasCollisions snakePos
         then fallBackState
         else
-          s
-            { snakePosition = snakePos,
-              snackPosition = snackPos
-            }
+          s {snakePosition = snakePos, snackPosition = snackPos}
 
 hasCollisions :: [(Int, Int)] -> Bool
 hasCollisions [] = False
 hasCollisions (x : xs) = x `elem` xs || hasCollisions xs
 
 changeDirection :: SnakeDirection -> Snake -> Snake
-changeDirection dir s@(Snake {snakeDirection = currentDir}) =
-  s
-    { snakeDirection = case currentDir of
-        GoUp -> if dir == GoDown then currentDir else dir
-        GoDown -> if dir == GoUp then currentDir else dir
-        GoLeft -> if dir == GoRight then currentDir else dir
-        GoRight -> if dir == GoLeft then currentDir else dir
-    }
+changeDirection dir s@(Snake {snakeDirection = currentDir}) = s {snakeDirection = if dir == oppositeDir currentDir then currentDir else dir}
+  where
+    oppositeDir GoUp = GoDown
+    oppositeDir GoDown = GoUp
+    oppositeDir GoLeft = GoRight
+    oppositeDir GoRight = GoLeft
