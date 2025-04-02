@@ -58,7 +58,7 @@ library
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules:  Game, Game.Snake.Core, Game.Snake.UI
+    exposed-modules:  Game, Game.Snake.Core, Game.Snake.UI, Game.Tetris.Core, Game.Tetris.UI
 
     -- Modules included in this library but not exported.
     -- other-modules: Game.Core, Game.UI
@@ -115,7 +115,7 @@ test-suite snake-hs-tests
     main-is:          TestMain.hs
     
     -- Modules included in this test suite, other than Main.
-    other-modules:    TestSnake
+    other-modules:    TestSnake, TestTetris
     
     -- Dependencies specific to the test suite.
     build-depends:    base ^>=4.19.1.0,

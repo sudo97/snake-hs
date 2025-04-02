@@ -18,7 +18,6 @@ testSnake =
         [ TestLabel "Step" testStep,
           TestLabel "Render Level" testRenderLevel,
           TestLabel "Change Direction" testChangeDirection
-          -- Add more tests here
         ]
     )
 

@@ -3,11 +3,13 @@ module Main where
 import System.Exit (exitFailure, exitSuccess)
 import Test.HUnit
 import TestSnake (testSnake)
+import TestTetris (testTetris)
 
 tests :: Test
 tests =
   TestList
-    [ testSnake
+    [ testSnake,
+      testTetris
     ]
 
 -- Main function to run tests
