@@ -115,7 +115,7 @@ test-suite snake-hs-tests
     main-is:          TestMain.hs
     
     -- Modules included in this test suite, other than Main.
-    -- other-modules:
+    other-modules:    TestSnake
     
     -- Dependencies specific to the test suite.
     build-depends:    base ^>=4.19.1.0,
