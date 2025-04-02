@@ -1,4 +1,4 @@
-module Game.UI where
+module Game.Snake.UI where
 
 import Brick
 import Brick.BChan
@@ -8,7 +8,7 @@ import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad (forever)
 import Control.Monad.IO.Class
 import Data.Functor (void)
-import Game.Core
+import Game.Snake.Core
 import qualified Graphics.Vty as V
 import Graphics.Vty.CrossPlatform (mkVty)
 
@@ -55,8 +55,8 @@ handleEvent (VtyEvent (V.EvKey V.KRight [])) = do
   put st'
 handleEvent _ = pure ()
 
-runGame :: IO ()
-runGame = do
+runSnakeGame :: IO ()
+runSnakeGame = do
   eventChan <- newBChan 10
 
   _ <- forkIO $ forever $ do

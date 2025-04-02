@@ -1,4 +1,4 @@
-module Game.Core where
+module Game.Snake.Core where
 
 import System.Random (randomRIO)
 

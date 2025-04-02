@@ -58,7 +58,7 @@ library
     import:           warnings
 
     -- Modules exported by the library.
-    exposed-modules:  Game, Game.Core, Game.UI
+    exposed-modules:  Game, Game.Snake.Core, Game.Snake.UI
 
     -- Modules included in this library but not exported.
     -- other-modules: Game.Core, Game.UI

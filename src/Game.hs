@@ -1,3 +1,3 @@
-module Game (runGame) where
+module Game (runSnakeGame) where
 
-import Game.UI
+import Game.Snake.UI (runSnakeGame)

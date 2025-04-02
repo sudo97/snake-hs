@@ -1,13 +1,13 @@
 module Main where
 
-import Game.Core
+import Game.Snake.Core
   ( Snake (..),
     SnakeDirection (..),
     changeDirection,
     initialState,
     step,
   )
-import Game.UI (renderLevel)
+import Game.Snake.UI (renderLevel)
 import System.Exit (exitFailure, exitSuccess)
 import Test.HUnit
 
