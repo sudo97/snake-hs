@@ -16,13 +16,17 @@ testRotate =
       [ TestCase $ do
           let dot = Set.fromList [(5, 3)]
           let expected = Set.fromList [(5, 3)]
-          assertEqual "Dot should rotate" expected (rotate dot)
+          assertEqual "Dot should rotate" expected (rotate dot),
+        TestCase $ do
           let twoPts = Set.fromList [(5, 3), (6, 3)]
           let expected = Set.fromList [(5, 3), (5, 2)]
-          assertEqual "Two points should rotate" expected (rotate twoPts)
+          assertEqual "Two points should rotate" expected (rotate twoPts),
+        TestCase $ do
           let straight = Set.fromList [(5, 3), (5, 2), (5, 1)]
           let expected = Set.fromList [(5, 3), (6, 3), (7, 3)]
-          assertEqual "Straight should rotate" expected (rotate straight)
+          assertEqual "Straight should rotate" expected (rotate straight),
+        TestCase $ do
+          let straight = Set.fromList [(5, 3), (5, 2), (5, 1)]
           assertEqual "Straight should rotate 4 times" straight (rotate (rotate (rotate (rotate straight))))
       ]
 
