@@ -7,7 +7,7 @@ data TetrisGame = TetrisGame {}
 type Point = (Int, Int)
 
 step :: Set.Set Point -> Set.Set Point
-step = Set.map (\(x, y) -> (x, y - 1))
+step = Set.map (\(x, y) -> (x, max (y - 1) 0))
 
 topLeft :: Set.Set Point -> Point
 topLeft pts = (minimum (Set.map fst pts), maximum (Set.map snd pts))
