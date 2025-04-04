@@ -43,8 +43,15 @@ testRotate =
       ]
 
 testStep :: Test
-testStep = TestLabel "step" $
-  TestCase $ do
-    let squareShape = Set.fromList [(0, 10), (0, 9), (1, 10), (1, 9)]
-    let expected = Set.fromList [(0, 9), (0, 8), (1, 9), (1, 8)]
-    assertEqual "Square shape should move down" expected (step squareShape)
+testStep =
+  TestLabel "step" $
+    TestList
+      [ TestCase $ do
+          let squareShape = Set.fromList [(0, 10), (0, 9), (1, 10), (1, 9)]
+          let expected = Set.fromList [(0, 9), (0, 8), (1, 9), (1, 8)]
+          assertEqual "Square shape should move down" expected (step squareShape),
+        TestCase $ do
+          let nearTheBottom = Set.fromList [(0, 0)]
+          let expected = Set.fromList [(0, 0)]
+          assertEqual "Shape should not move down when near the bottom" expected (step nearTheBottom)
+      ]
