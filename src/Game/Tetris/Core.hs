@@ -4,7 +4,8 @@ import qualified Data.Set as Set
 
 data TetrisGame = TetrisGame
   { screenWidth :: Int,
-    screenHeight :: Int
+    screenHeight :: Int,
+    figure :: Set.Set Point
   }
   deriving (Show, Eq)
 

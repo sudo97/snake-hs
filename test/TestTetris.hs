@@ -62,7 +62,12 @@ testUI =
   TestLabel "UI" $
     TestList
       [ TestCase $ do
-          let game = TetrisGame {screenWidth = 3, screenHeight = 3}
-          let expected = unlines ["   ", "   ", "   "]
+          let game = TetrisGame {screenWidth = 3, screenHeight = 3, figure = Set.fromList [(0, 0)]}
+          let expected =
+                unlines
+                  [ "   ",
+                    "   ",
+                    "x  "
+                  ]
           assertEqual "UI should return a 3x3 grid of spaces" expected (ui game)
       ]
