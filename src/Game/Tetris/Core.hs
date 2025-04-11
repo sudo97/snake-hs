@@ -2,7 +2,11 @@ module Game.Tetris.Core where
 
 import qualified Data.Set as Set
 
-data TetrisGame = TetrisGame {}
+data TetrisGame = TetrisGame
+  { screenWidth :: Int,
+    screenHeight :: Int
+  }
+  deriving (Show, Eq)
 
 type Point = (Int, Int)
 

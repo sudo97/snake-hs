@@ -3,7 +3,8 @@
 module TestTetris (testTetris) where
 
 import qualified Data.Set as Set
-import Game.Tetris.Core (rotate, step)
+import Game.Tetris.Core (TetrisGame (..), rotate, step)
+import Game.Tetris.UI (ui)
 import Test.HUnit
 
 testTetris :: Test
@@ -61,5 +62,7 @@ testUI =
   TestLabel "UI" $
     TestList
       [ TestCase $ do
-          fail "TODO: Implement testUI, we need to define the width and height of the board"
+          let game = TetrisGame {screenWidth = 3, screenHeight = 3}
+          let expected = unlines ["   ", "   ", "   "]
+          assertEqual "UI should return a 3x3 grid of spaces" expected (ui game)
       ]
