@@ -8,6 +8,7 @@ import Brick.Widgets.Border
 import Brick.Widgets.Center
 import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad (forever)
+import Control.Monad.IO.Class (liftIO)
 import Data.Functor (void)
 import qualified Data.Set as Set
 import Game.Tetris.Core (TetrisGame (..), rotate, step)
@@ -51,7 +52,7 @@ drawUI st = [center . border . str $ ui st]
 handleEvent :: BrickEvent () CustomEvent -> EventM () TetrisGame ()
 handleEvent (AppEvent Tick) = do
   st <- get
-  put $ step st
+  liftIO (step st) >>= put
 handleEvent (VtyEvent (V.EvKey V.KEsc [])) = do
   halt
 handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = do
@@ -65,4 +66,4 @@ handleEvent (VtyEvent (V.EvKey V.KRight [])) = pure ()
 handleEvent _ = pure ()
 
 initialState :: TetrisGame
-initialState = TetrisGame {screenWidth = 10, screenHeight = 20, figure = Set.fromList [(0, 19), (1, 19), (2, 19), (1, 18)]}
+initialState = TetrisGame {screenWidth = 10, screenHeight = 20, figure = Set.fromList [(0, 19), (1, 19), (2, 19), (1, 18)], ground = Set.empty}

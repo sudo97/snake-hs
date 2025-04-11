@@ -50,11 +50,14 @@ testStep =
       [ TestCase $ do
           let squareShape = Set.fromList [(0, 10), (0, 9), (1, 10), (1, 9)]
           let expected = Set.fromList [(0, 9), (0, 8), (1, 9), (1, 8)]
-          assertEqual "Square shape should move down" expected (figure (step (TetrisGame {screenWidth = 3, screenHeight = 3, figure = squareShape}))),
+          actualResult <- step (TetrisGame {screenWidth = 3, screenHeight = 3, figure = squareShape, ground = Set.empty})
+          assertEqual "Square shape should move down" expected (figure actualResult),
         TestCase $ do
-          let figure' = Set.fromList [(0, 1), (1, 1), (2, 1), (1, 0)]
-          let expected = Set.fromList [(0, 1), (1, 1), (2, 1), (1, 0)]
-          assertEqual "Should not move figure when it's on the bottom" expected (figure (step (TetrisGame {screenWidth = 10, screenHeight = 10, figure = figure'})))
+          let game = (TetrisGame {screenWidth = 10, screenHeight = 10, figure = Set.fromList [(0, 1), (1, 1), (2, 1), (1, 0)], ground = Set.empty})
+          let expectedGround = Set.fromList [(0, 1), (1, 1), (2, 1), (1, 0)]
+          actualResult <- step game
+          assertEqual "Should not move figure when it's on the bottom" expectedGround (ground actualResult)
+          assertBool "Figure should not be the same" (figure game /= figure actualResult)
       ]
 
 testUI :: Test
@@ -62,7 +65,7 @@ testUI =
   TestLabel "UI" $
     TestList
       [ TestCase $ do
-          let game = TetrisGame {screenWidth = 3, screenHeight = 3, figure = Set.fromList [(0, 2), (1, 2), (2, 2)]}
+          let game = TetrisGame {screenWidth = 3, screenHeight = 3, figure = Set.fromList [(0, 2), (1, 2), (2, 2)], ground = Set.empty}
           let expected =
                 unlines
                   [ "xxx",

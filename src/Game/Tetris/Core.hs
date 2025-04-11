@@ -1,20 +1,40 @@
 module Game.Tetris.Core where
 
 import qualified Data.Set as Set
+import System.Random (randomRIO)
 
 data TetrisGame = TetrisGame
   { screenWidth :: Int,
     screenHeight :: Int,
-    figure :: Set.Set Point
+    figure :: Set.Set Point,
+    ground :: Set.Set Point
   }
   deriving (Show, Eq)
 
 type Point = (Int, Int)
 
-step :: TetrisGame -> TetrisGame
-step game = game {figure = if shouldMoveDown then Set.map (\(x, y) -> (x, max (y - 1) 0)) (figure game) else figure game}
-  where
-    shouldMoveDown = minimum (Set.map snd (figure game)) > 0
+figures :: Int -> Int -> [Set.Set Point]
+figures height width =
+  let topY = height - 1
+      midX = width `div` 2
+   in [ Set.fromList [(midX - 2, topY), (midX - 1, topY), (midX, topY), (midX + 1, topY)],
+        Set.fromList [(midX - 1, topY), (midX, topY), (midX + 1, topY), (midX, topY - 1)],
+        Set.fromList [(midX - 1, topY), (midX, topY), (midX + 1, topY - 1), (midX, topY - 1)],
+        Set.fromList [(midX + 1, topY), (midX, topY), (midX + 1, topY - 1), (midX, topY - 1)],
+        Set.fromList [(midX + 1, topY), (midX, topY), (midX - 1, topY - 1), (midX, topY - 1)]
+      ]
+
+step :: TetrisGame -> IO TetrisGame
+step game = do
+  let shouldMoveDown = minimum (Set.map snd (figure game)) > 0
+  if shouldMoveDown
+    then do
+      pure game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) (figure game)}
+    else do
+      let figures' = figures (screenHeight game) (screenWidth game)
+      newIdx <- randomRIO (0, length figures' - 1)
+      let newFigure = figures' !! newIdx
+      pure game {figure = newFigure, ground = Set.union (figure game) (ground game)}
 
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =
