@@ -7,7 +7,7 @@ import Game.Tetris.Core (rotate, step)
 import Test.HUnit
 
 testTetris :: Test
-testTetris = TestLabel "Tetris" (TestList [testStep, testRotate])
+testTetris = TestLabel "Tetris" (TestList [testStep, testRotate, testUI])
 
 testRotate :: Test
 testRotate =
@@ -54,4 +54,12 @@ testStep =
           let nearTheBottom = Set.fromList [(0, 0)]
           let expected = Set.fromList [(0, 0)]
           assertEqual "Shape should not move down when near the bottom" expected (step nearTheBottom)
+      ]
+
+testUI :: Test
+testUI =
+  TestLabel "UI" $
+    TestList
+      [ TestCase $ do
+          fail "TODO: Implement testUI, we need to define the width and height of the board"
       ]
