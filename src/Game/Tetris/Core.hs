@@ -12,7 +12,9 @@ data TetrisGame = TetrisGame
 type Point = (Int, Int)
 
 step :: TetrisGame -> TetrisGame
-step game = game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) (figure game)}
+step game = game {figure = if shouldMoveDown then Set.map (\(x, y) -> (x, max (y - 1) 0)) (figure game) else figure game}
+  where
+    shouldMoveDown = minimum (Set.map snd (figure game)) > 0
 
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =

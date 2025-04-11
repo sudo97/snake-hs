@@ -54,7 +54,11 @@ testStep =
         TestCase $ do
           let nearTheBottom = Set.fromList [(0, 0)]
           let expected = Set.fromList [(0, 0)]
-          assertEqual "Shape should not move down when near the bottom" expected (figure (step (TetrisGame {screenWidth = 1, screenHeight = 1, figure = nearTheBottom})))
+          assertEqual "Shape should not move down when near the bottom" expected (figure (step (TetrisGame {screenWidth = 1, screenHeight = 1, figure = nearTheBottom}))),
+        TestCase $ do
+          let figure' = Set.fromList [(0, 1), (1, 1), (2, 1), (1, 0)]
+          let expected = Set.fromList [(0, 1), (1, 1), (2, 1), (1, 0)]
+          assertEqual "Should not move figure when it's on the bottom" expected (figure (step (TetrisGame {screenWidth = 10, screenHeight = 10, figure = figure'})))
       ]
 
 testUI :: Test
