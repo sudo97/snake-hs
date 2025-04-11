@@ -11,8 +11,8 @@ data TetrisGame = TetrisGame
 
 type Point = (Int, Int)
 
-step :: Set.Set Point -> Set.Set Point
-step = Set.map (\(x, y) -> (x, max (y - 1) 0))
+step :: TetrisGame -> TetrisGame
+step game = game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) (figure game)}
 
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =
