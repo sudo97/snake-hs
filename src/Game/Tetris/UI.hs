@@ -10,7 +10,7 @@ import Control.Concurrent (forkIO, threadDelay)
 import Control.Monad (forever)
 import Data.Functor (void)
 import qualified Data.Set as Set
-import Game.Tetris.Core (TetrisGame (..), step)
+import Game.Tetris.Core (TetrisGame (..), rotate, step)
 import qualified Graphics.Vty as V
 import Graphics.Vty.CrossPlatform (mkVty)
 
@@ -56,11 +56,13 @@ handleEvent (VtyEvent (V.EvKey V.KEsc [])) = do
   halt
 handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = do
   halt
-handleEvent (VtyEvent (V.EvKey V.KUp [])) = pure ()
+handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
+  st <- get
+  put $ st {figure = rotate (figure st)}
 handleEvent (VtyEvent (V.EvKey V.KDown [])) = pure ()
 handleEvent (VtyEvent (V.EvKey V.KLeft [])) = pure ()
 handleEvent (VtyEvent (V.EvKey V.KRight [])) = pure ()
 handleEvent _ = pure ()
 
 initialState :: TetrisGame
-initialState = TetrisGame {screenWidth = 10, screenHeight = 20, figure = Set.fromList [(0, 19), (1, 19), (2, 19), (3, 19)]}
+initialState = TetrisGame {screenWidth = 10, screenHeight = 20, figure = Set.fromList [(0, 19), (1, 19), (2, 19), (1, 18)]}
