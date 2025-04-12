@@ -53,10 +53,8 @@ handleEvent :: BrickEvent () CustomEvent -> EventM () TetrisGame ()
 handleEvent (AppEvent Tick) = do
   st <- get
   liftIO (step st) >>= put
-handleEvent (VtyEvent (V.EvKey V.KEsc [])) = do
-  halt
-handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = do
-  halt
+handleEvent (VtyEvent (V.EvKey V.KEsc [])) = halt
+handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt
 handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
   st <- get
   put $ st {figure = rotate (figure st)}
