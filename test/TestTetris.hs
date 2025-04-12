@@ -124,7 +124,13 @@ testMoveRight =
                     figure = Set.fromList [(3, 4), (4, 4)],
                     ground = Set.empty
                   }
-          let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(3, 4), (4, 4)], ground = Set.empty}
+          let expected =
+                TetrisGame
+                  { screenWidth = 5,
+                    screenHeight = 5,
+                    figure = Set.fromList [(3, 4), (4, 4)],
+                    ground = Set.empty
+                  }
           let actualResult = moveRight game
           assertEqual "Figure should not leave the screen" expected actualResult
       ]
