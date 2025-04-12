@@ -52,7 +52,7 @@ drawUI st = [center . border . str $ ui st]
 handleEvent :: BrickEvent () CustomEvent -> EventM () TetrisGame ()
 handleEvent (AppEvent Tick) = do
   st <- get
-  liftIO (step st) >>= put
+  liftIO (step undefined st) >>= put
 handleEvent (VtyEvent (V.EvKey V.KEsc [])) = halt
 handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = halt
 handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
@@ -60,7 +60,7 @@ handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
   put $ st {figure = rotate (figure st)}
 handleEvent (VtyEvent (V.EvKey V.KDown [])) = do
   st <- get
-  liftIO (step st) >>= put
+  liftIO (step undefined st) >>= put
 handleEvent (VtyEvent (V.EvKey V.KLeft [])) = do
   st <- get
   put $ moveLeft st
