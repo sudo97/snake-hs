@@ -26,20 +26,33 @@ figures height width =
         Set.fromList [(midX + 1, topY), (midX, topY), (midX - 1, topY - 1), (midX, topY - 1)]
       ]
 
+newFigure :: TetrisGame -> IO (Set.Set Point)
+newFigure TetrisGame {screenHeight, screenWidth} = do
+  let figures' = figures screenHeight screenWidth
+  (figures' !!) <$> randomRIO (0, length figures' - 1)
+
 step :: TetrisGame -> IO TetrisGame
-step game = do
-  let shouldMoveDown = minimum (Set.map snd (figure game)) > 0 && hasNothingUnderFigure game
-  if shouldMoveDown
-    then pure game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) (figure game)}
-    else do
-      let figures' = figures (screenHeight game) (screenWidth game)
-      newIdx <- randomRIO (0, length figures' - 1)
-      let newFigure = figures' !! newIdx
-      pure game {figure = newFigure, ground = Set.union (figure game) (ground game)}
-  where
-    hasNothingUnderFigure (TetrisGame {figure, ground}) =
-      let figurePoints = Set.map (\(x, y) -> (x, y - 1)) figure
-       in Set.null (Set.intersection figurePoints ground)
+step game@TetrisGame {figure, ground} = do
+  let shouldMoveDown = minimum (Set.map snd figure) > 0 && hasNothingUnderFigure game
+  cleanUpBottomRow
+    <$> if shouldMoveDown
+      then pure (game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) figure})
+      else do
+        newRandomFigure <- newFigure game
+
+        pure game {figure = newRandomFigure, ground = Set.union figure ground}
+
+hasNothingUnderFigure :: TetrisGame -> Bool
+hasNothingUnderFigure (TetrisGame {figure, ground}) =
+  let figurePoints = Set.map (\(x, y) -> (x, y - 1)) figure
+   in Set.null (Set.intersection figurePoints ground)
+
+cleanUpBottomRow :: TetrisGame -> TetrisGame
+cleanUpBottomRow g@(TetrisGame {screenWidth, ground}) =
+  let canClean = all (\x -> Set.member (x, 0) ground) [0 .. screenWidth - 1]
+   in if canClean
+        then cleanUpBottomRow (g {ground = Set.map (\(x, y) -> (x, y - 1)) (Set.filter (\(_, y) -> y > 0) ground)})
+        else g
 
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =
