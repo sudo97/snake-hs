@@ -66,15 +66,14 @@ rotate pts =
   where
     topLeft = (,) <$> minimum . Set.map fst <*> maximum . Set.map snd
 
--- TODO: add collision with ground set
 moveLeft :: TetrisGame -> TetrisGame
-moveLeft game@(TetrisGame {figure}) =
+moveLeft game@(TetrisGame {figure, ground}) =
   let shouldMoveLeft = minimum (Set.map fst figure) > 0
       figure' = if shouldMoveLeft then Set.map (\(x, y) -> (x - 1, y)) figure else figure
-   in game {figure = figure'}
+   in game {figure = if Set.null (Set.intersection figure' ground) then figure' else figure}
 
 moveRight :: TetrisGame -> TetrisGame
-moveRight game@(TetrisGame {figure, screenWidth}) =
-  let shouldMoveRight = maximum (Set.map fst figure) < screenWidth - 1
-      figure' = if shouldMoveRight then Set.map (\(x, y) -> (x + 1, y)) figure else figure
-   in game {figure = figure'}
+moveRight game@(TetrisGame {figure, screenWidth, ground}) =
+  let isNotAtTheRightEdge = maximum (Set.map fst figure) < screenWidth - 1
+      figure' = if isNotAtTheRightEdge then Set.map (\(x, y) -> (x + 1, y)) figure else figure
+   in game {figure = if Set.null (Set.intersection figure' ground) then figure' else figure}

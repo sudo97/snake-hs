@@ -144,7 +144,18 @@ testMoveLeft =
                   }
           let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(0, 4), (1, 4)], ground = Set.empty}
           let actualResult = moveLeft game
-          assertEqual "Figure should not leave the screen" expected actualResult
+          assertEqual "Figure should not leave the screen" expected actualResult,
+        TestCase $ do
+          let game =
+                TetrisGame
+                  { screenWidth = 5,
+                    screenHeight = 5,
+                    figure = Set.fromList [(1, 3)],
+                    ground = Set.fromList [(0, 3)]
+                  }
+          let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(1, 3)], ground = Set.fromList [(0, 3)]}
+          let actualResult = moveLeft game
+          assertEqual "Figure should not move left if there's ground on the left" expected actualResult
       ]
 
 testMoveRight :: Test
@@ -177,5 +188,16 @@ testMoveRight =
                     ground = Set.empty
                   }
           let actualResult = moveRight game
-          assertEqual "Figure should not leave the screen" expected actualResult
+          assertEqual "Figure should not leave the screen" expected actualResult,
+        TestCase $ do
+          let game =
+                TetrisGame
+                  { screenWidth = 5,
+                    screenHeight = 5,
+                    figure = Set.fromList [(0, 3)],
+                    ground = Set.fromList [(1, 3)]
+                  }
+          let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(0, 3)], ground = Set.fromList [(1, 3)]}
+          let actualResult = moveRight game
+          assertEqual "Figure should collide with the ground" expected actualResult
       ]
