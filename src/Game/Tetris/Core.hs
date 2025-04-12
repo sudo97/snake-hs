@@ -47,6 +47,7 @@ hasNothingUnderFigure (TetrisGame {figure, ground}) =
   let figurePoints = Set.map (\(x, y) -> (x, y - 1)) figure
    in Set.null (Set.intersection figurePoints ground)
 
+-- TODO: Cleanup not the bottom row, but every row that is full
 cleanUpBottomRow :: TetrisGame -> TetrisGame
 cleanUpBottomRow g@(TetrisGame {screenWidth, ground}) =
   let canClean = all (\x -> Set.member (x, 0) ground) [0 .. screenWidth - 1]
@@ -57,14 +58,15 @@ cleanUpBottomRow g@(TetrisGame {screenWidth, ground}) =
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =
   let (rotX, rotY) = topLeft pts
-      newFigure = Set.map (\(x, y) -> (rotX + y - rotY, rotY - x + rotX)) pts
-      (topX, topY) = topLeft newFigure
+      rotatedFigure = Set.map (\(x, y) -> (rotX + y - rotY, rotY - x + rotX)) pts
+      (topX, topY) = topLeft rotatedFigure
       deltaX = rotX - topX
       deltaY = rotY - topY
-   in Set.map (\(x, y) -> (x + deltaX, y + deltaY)) newFigure
+   in Set.map (\(x, y) -> (x + deltaX, y + deltaY)) rotatedFigure
   where
     topLeft = (,) <$> minimum . Set.map fst <*> maximum . Set.map snd
 
+-- TODO: add collision with ground set
 moveLeft :: TetrisGame -> TetrisGame
 moveLeft game@(TetrisGame {figure}) =
   let shouldMoveLeft = minimum (Set.map fst figure) > 0
