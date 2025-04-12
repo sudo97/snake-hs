@@ -67,6 +67,7 @@ cleanUpCompletedRows game@(TetrisGame {screenWidth, ground, screenHeight}) =
                 }
             )
 
+-- TODO: rotation has a bug when rotated at the edge of the screen, the figure's point may go out of the screen
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =
   let (rotX, rotY) = topLeft pts
