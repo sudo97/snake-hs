@@ -32,8 +32,8 @@ newFigure TetrisGame {screenHeight, screenWidth} = do
   (figures' !!) <$> randomRIO (0, length figures' - 1)
 
 -- TODO: when ground reaches the top, game over
-step :: TetrisGame -> TetrisGame -> IO TetrisGame
-step _ game@TetrisGame {figure, ground} = do
+step :: TetrisGame -> IO TetrisGame
+step game@TetrisGame {figure, ground} = do
   let shouldMoveDown = minimum (Set.map snd figure) > 0 && hasNothingUnderFigure game
   cleanUpCompletedRows
     <$> if shouldMoveDown
