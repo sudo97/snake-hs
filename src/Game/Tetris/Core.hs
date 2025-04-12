@@ -28,15 +28,18 @@ figures height width =
 
 step :: TetrisGame -> IO TetrisGame
 step game = do
-  let shouldMoveDown = minimum (Set.map snd (figure game)) > 0
+  let shouldMoveDown = minimum (Set.map snd (figure game)) > 0 && hasNothingUnderFigure game
   if shouldMoveDown
-    then do
-      pure game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) (figure game)}
+    then pure game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) (figure game)}
     else do
       let figures' = figures (screenHeight game) (screenWidth game)
       newIdx <- randomRIO (0, length figures' - 1)
       let newFigure = figures' !! newIdx
       pure game {figure = newFigure, ground = Set.union (figure game) (ground game)}
+  where
+    hasNothingUnderFigure (TetrisGame {figure, ground}) =
+      let figurePoints = Set.map (\(x, y) -> (x, y - 1)) figure
+       in Set.null (Set.intersection figurePoints ground)
 
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =
@@ -47,7 +50,7 @@ rotate pts =
       deltaY = rotY - topY
    in Set.map (\(x, y) -> (x + deltaX, y + deltaY)) newFigure
   where
-    topLeft = (,) <$> (minimum . Set.map fst) <*> (maximum . Set.map snd)
+    topLeft = (,) <$> minimum . Set.map fst <*> maximum . Set.map snd
 
 moveLeft :: TetrisGame -> TetrisGame
 moveLeft game@(TetrisGame {figure}) =

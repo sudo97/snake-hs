@@ -67,7 +67,18 @@ testStep =
           let expectedGround = Set.fromList [(0, 1), (1, 1), (2, 1), (1, 0)]
           actualResult <- step game
           assertEqual "Should not move figure when it's on the bottom" expectedGround (ground actualResult)
-          assertBool "Figure should not be the same" (figure game /= figure actualResult)
+          assertBool "Figure should not be the same" (figure game /= figure actualResult),
+        TestCase $ do
+          let game =
+                TetrisGame
+                  { screenWidth = 3,
+                    screenHeight = 3,
+                    figure = Set.fromList [(0, 1)],
+                    ground = Set.fromList [(0, 0)]
+                  }
+          let expectedGround = Set.fromList [(0, 0), (0, 1)]
+          actualResult <- step game
+          assertEqual "Should properly merge figure and ground" expectedGround (ground actualResult)
       ]
 
 testUI :: Test
