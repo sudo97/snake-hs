@@ -35,7 +35,7 @@ newFigure TetrisGame {screenHeight, screenWidth} = do
 step :: TetrisGame -> IO TetrisGame
 step game@TetrisGame {figure, ground} = do
   let shouldMoveDown = minimum (Set.map snd figure) > 0 && hasNothingUnderFigure game
-  cleanUpBottomRow
+  cleanUpCompletedRows
     <$> if shouldMoveDown
       then pure (game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) figure})
       else do
@@ -48,12 +48,12 @@ hasNothingUnderFigure (TetrisGame {figure, ground}) =
   let figurePoints = Set.map (\(x, y) -> (x, y - 1)) figure
    in Set.null (Set.intersection figurePoints ground)
 
-cleanUpBottomRow :: TetrisGame -> TetrisGame
-cleanUpBottomRow game@(TetrisGame {screenWidth, ground, screenHeight}) =
+cleanUpCompletedRows :: TetrisGame -> TetrisGame
+cleanUpCompletedRows game@(TetrisGame {screenWidth, ground, screenHeight}) =
   let ys = [0 .. screenHeight - 1]
    in case filter (\y -> all (\x -> Set.member (x, y) ground) [0 .. screenWidth - 1]) ys of
         [] -> game
-        (y : _) -> cleanUpBottomRow (game {ground = Set.map (\(x, y') -> (x, if y' > y then y' - 1 else y')) (Set.filter (\(_, y') -> y' /= y) ground)})
+        (y : _) -> cleanUpCompletedRows (game {ground = Set.map (\(x, y') -> (x, if y' > y then y' - 1 else y')) (Set.filter (\(_, y') -> y' /= y) ground)})
 
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =
