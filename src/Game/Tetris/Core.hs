@@ -53,7 +53,12 @@ cleanUpCompletedRows game@(TetrisGame {screenWidth, ground, screenHeight}) =
   let ys = [0 .. screenHeight - 1]
    in case filter (\y -> all (\x -> Set.member (x, y) ground) [0 .. screenWidth - 1]) ys of
         [] -> game
-        (y : _) -> cleanUpCompletedRows (game {ground = Set.map (\(x, y') -> (x, if y' > y then y' - 1 else y')) (Set.filter (\(_, y') -> y' /= y) ground)})
+        (y : _) ->
+          cleanUpCompletedRows
+            ( game
+                { ground = Set.map (\(x, y') -> (x, if y' > y then y' - 1 else y')) (Set.filter (\(_, y') -> y' /= y) ground)
+                }
+            )
 
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =
