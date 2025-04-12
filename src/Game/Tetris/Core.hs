@@ -31,17 +31,22 @@ newFigure TetrisGame {screenHeight, screenWidth} = do
   let figures' = figures screenHeight screenWidth
   (figures' !!) <$> randomRIO (0, length figures' - 1)
 
--- TODO: when ground reaches the top, game over
 step :: TetrisGame -> IO TetrisGame
 step game@TetrisGame {figure, ground} = do
   let shouldMoveDown = minimum (Set.map snd figure) > 0 && hasNothingUnderFigure game
-  cleanUpCompletedRows
-    <$> if shouldMoveDown
-      then pure (game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) figure})
-      else do
-        newRandomFigure <- newFigure game
+  newGame <-
+    cleanUpCompletedRows
+      <$> if shouldMoveDown
+        then pure (game {figure = Set.map (\(x, y) -> (x, max (y - 1) 0)) figure})
+        else do
+          newRandomFigure <- newFigure game
+          pure game {figure = newRandomFigure, ground = Set.union figure ground}
+  pure $ if isGameOver newGame then newGame {ground = Set.empty} else newGame
 
-        pure game {figure = newRandomFigure, ground = Set.union figure ground}
+isGameOver :: TetrisGame -> Bool
+isGameOver (TetrisGame {screenHeight, ground}) =
+  let topY = maximum (Set.map snd ground)
+   in not (Set.null ground) && topY >= screenHeight - 1
 
 hasNothingUnderFigure :: TetrisGame -> Bool
 hasNothingUnderFigure (TetrisGame {figure, ground}) =

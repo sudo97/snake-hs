@@ -112,7 +112,12 @@ testStep =
                   }
           let expectedGround = Set.fromList [(0, 0), (1, 0), (0, 1)]
           actualResult <- step game
-          assertEqual "Should clean up the not just the bottom row" expectedGround (ground actualResult)
+          assertEqual "Should clean up the not just the bottom row" expectedGround (ground actualResult),
+        TestCase $ do
+          let game = TetrisGame {screenWidth = 3, screenHeight = 3, figure = Set.fromList [(2, 2)], ground = Set.fromList [(0, 0), (0, 1), (0, 2)]}
+          let expectedGround = Set.empty
+          actualResult <- step game
+          assertEqual "Should restart the game" expectedGround (ground actualResult)
       ]
 
 testUI :: Test
