@@ -8,7 +8,17 @@ import Game.Tetris.UI (ui)
 import Test.HUnit
 
 testTetris :: Test
-testTetris = TestLabel "Tetris" (TestList [testStep, testRotate, testUI, testMoveLeft, testMoveRight])
+testTetris =
+  TestLabel
+    "Tetris"
+    ( TestList
+        [ testStep,
+          testRotate,
+          testUI,
+          testMoveLeft,
+          testMoveRight
+        ]
+    )
 
 testRotate :: Test
 testRotate =
@@ -65,12 +75,18 @@ testUI =
   TestLabel "UI" $
     TestList
       [ TestCase $ do
-          let game = TetrisGame {screenWidth = 3, screenHeight = 3, figure = Set.fromList [(0, 2), (1, 2), (2, 2)], ground = Set.empty}
+          let game =
+                TetrisGame
+                  { screenWidth = 3,
+                    screenHeight = 3,
+                    figure = Set.fromList [(0, 2), (1, 2), (2, 2)],
+                    ground = Set.fromList [(0, 0), (1, 0)]
+                  }
           let expected =
                 unlines
                   [ "xxx",
                     "   ",
-                    "   "
+                    "xx "
                   ]
           assertEqual "UI should return a 3x3 grid of spaces" expected (ui game)
       ]

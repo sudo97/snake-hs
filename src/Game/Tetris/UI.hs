@@ -18,10 +18,10 @@ import Graphics.Vty.CrossPlatform (mkVty)
 data CustomEvent = Tick
 
 ui :: TetrisGame -> String
-ui TetrisGame {screenWidth, screenHeight, figure} =
+ui TetrisGame {screenWidth, screenHeight, figure, ground} =
   unlines . reverse $ [renderLine y | y <- [0 .. screenHeight - 1]]
   where
-    renderPoint (x, y) = if (x, y) `Set.member` figure then 'x' else ' '
+    renderPoint (x, y) = if (x, y) `Set.member` figure || (x, y) `Set.member` ground then 'x' else ' '
     renderLine y = [renderPoint (x, y) | x <- [0 .. screenWidth - 1]]
 
 runTetrisGame :: IO ()
