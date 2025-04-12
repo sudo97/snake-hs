@@ -95,7 +95,6 @@ testStep =
                   }
           let expectedGround = Set.fromList [(0, 0)]
           actualResult <- step game
-          print actualResult
           assertEqual "Should clean up the bottom row" expectedGround (ground actualResult)
       ]
 

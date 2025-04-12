@@ -67,13 +67,14 @@ rotate pts =
     topLeft = (,) <$> minimum . Set.map fst <*> maximum . Set.map snd
 
 moveLeft :: TetrisGame -> TetrisGame
-moveLeft game@(TetrisGame {figure, ground}) =
-  let shouldMoveLeft = minimum (Set.map fst figure) > 0
-      figure' = if shouldMoveLeft then Set.map (\(x, y) -> (x - 1, y)) figure else figure
-   in game {figure = if Set.null (Set.intersection figure' ground) then figure' else figure}
+moveLeft = moveFigure (-1)
 
 moveRight :: TetrisGame -> TetrisGame
-moveRight game@(TetrisGame {figure, screenWidth, ground}) =
-  let isNotAtTheRightEdge = maximum (Set.map fst figure) < screenWidth - 1
-      figure' = if isNotAtTheRightEdge then Set.map (\(x, y) -> (x + 1, y)) figure else figure
-   in game {figure = if Set.null (Set.intersection figure' ground) then figure' else figure}
+moveRight = moveFigure 1
+
+moveFigure :: Int -> TetrisGame -> TetrisGame
+moveFigure delta game@(TetrisGame {figure, ground, screenWidth}) =
+  let figure' = Set.map (\(x, y) -> (x + delta, y)) figure
+   in game {figure = if isSafeToMove figure' then figure' else figure}
+  where
+    isSafeToMove figure' = minimum (Set.map fst figure') >= 0 && maximum (Set.map fst figure') <= screenWidth - 1 && Set.null (Set.intersection figure' ground)
