@@ -3,12 +3,12 @@
 module TestTetris (testTetris) where
 
 import qualified Data.Set as Set
-import Game.Tetris.Core (TetrisGame (..), rotate, step)
+import Game.Tetris.Core (TetrisGame (..), moveLeft, moveRight, rotate, step)
 import Game.Tetris.UI (ui)
 import Test.HUnit
 
 testTetris :: Test
-testTetris = TestLabel "Tetris" (TestList [testStep, testRotate, testUI])
+testTetris = TestLabel "Tetris" (TestList [testStep, testRotate, testUI, testMoveLeft, testMoveRight])
 
 testRotate :: Test
 testRotate =
@@ -73,4 +73,58 @@ testUI =
                     "   "
                   ]
           assertEqual "UI should return a 3x3 grid of spaces" expected (ui game)
+      ]
+
+testMoveLeft :: Test
+testMoveLeft =
+  TestLabel "moveLeft" $
+    TestList
+      [ TestCase $ do
+          let game = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(1, 4)], ground = Set.empty}
+          let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(0, 4)], ground = Set.empty}
+          let actualResult = moveLeft game
+          assertEqual "Figure should move left" expected actualResult,
+        TestCase $ do
+          let game = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(0, 4)], ground = Set.empty}
+          let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(0, 4)], ground = Set.empty}
+          let actualResult = moveLeft game
+          assertEqual "Figure should not leave the screen" expected actualResult,
+        TestCase $ do
+          let game =
+                TetrisGame
+                  { screenWidth = 5,
+                    screenHeight = 5,
+                    figure = Set.fromList [(0, 4), (1, 4)],
+                    ground = Set.empty
+                  }
+          let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(0, 4), (1, 4)], ground = Set.empty}
+          let actualResult = moveLeft game
+          assertEqual "Figure should not leave the screen" expected actualResult
+      ]
+
+testMoveRight :: Test
+testMoveRight =
+  TestLabel "moveRight" $
+    TestList
+      [ TestCase $ do
+          let game = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(3, 4)], ground = Set.empty}
+          let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(4, 4)], ground = Set.empty}
+          let actualResult = moveRight game
+          assertEqual "Figure should move right" expected actualResult,
+        TestCase $ do
+          let game = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(4, 4)], ground = Set.empty}
+          let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(4, 4)], ground = Set.empty}
+          let actualResult = moveRight game
+          assertEqual "Figure should not leave the screen" expected actualResult,
+        TestCase $ do
+          let game =
+                TetrisGame
+                  { screenWidth = 5,
+                    screenHeight = 5,
+                    figure = Set.fromList [(3, 4), (4, 4)],
+                    ground = Set.empty
+                  }
+          let expected = TetrisGame {screenWidth = 5, screenHeight = 5, figure = Set.fromList [(3, 4), (4, 4)], ground = Set.empty}
+          let actualResult = moveRight game
+          assertEqual "Figure should not leave the screen" expected actualResult
       ]

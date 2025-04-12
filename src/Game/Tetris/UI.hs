@@ -11,7 +11,7 @@ import Control.Monad (forever)
 import Control.Monad.IO.Class (liftIO)
 import Data.Functor (void)
 import qualified Data.Set as Set
-import Game.Tetris.Core (TetrisGame (..), rotate, step)
+import Game.Tetris.Core (TetrisGame (..), moveLeft, moveRight, rotate, step)
 import qualified Graphics.Vty as V
 import Graphics.Vty.CrossPlatform (mkVty)
 
@@ -60,9 +60,15 @@ handleEvent (VtyEvent (V.EvKey (V.KChar 'q') [])) = do
 handleEvent (VtyEvent (V.EvKey V.KUp [])) = do
   st <- get
   put $ st {figure = rotate (figure st)}
-handleEvent (VtyEvent (V.EvKey V.KDown [])) = pure ()
-handleEvent (VtyEvent (V.EvKey V.KLeft [])) = pure ()
-handleEvent (VtyEvent (V.EvKey V.KRight [])) = pure ()
+handleEvent (VtyEvent (V.EvKey V.KDown [])) = do
+  st <- get
+  liftIO (step st) >>= put
+handleEvent (VtyEvent (V.EvKey V.KLeft [])) = do
+  st <- get
+  put $ moveLeft st
+handleEvent (VtyEvent (V.EvKey V.KRight [])) = do
+  st <- get
+  put $ moveRight st
 handleEvent _ = pure ()
 
 initialState :: TetrisGame

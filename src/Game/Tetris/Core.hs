@@ -1,3 +1,5 @@
+{-# LANGUAGE NamedFieldPuns #-}
+
 module Game.Tetris.Core where
 
 import qualified Data.Set as Set
@@ -46,3 +48,15 @@ rotate pts =
    in Set.map (\(x, y) -> (x + deltaX, y + deltaY)) newFigure
   where
     topLeft = (,) <$> (minimum . Set.map fst) <*> (maximum . Set.map snd)
+
+moveLeft :: TetrisGame -> TetrisGame
+moveLeft game@(TetrisGame {figure}) =
+  let shouldMoveLeft = minimum (Set.map fst figure) > 0
+      figure' = if shouldMoveLeft then Set.map (\(x, y) -> (x - 1, y)) figure else figure
+   in game {figure = figure'}
+
+moveRight :: TetrisGame -> TetrisGame
+moveRight game@(TetrisGame {figure, screenWidth}) =
+  let shouldMoveRight = maximum (Set.map fst figure) < screenWidth - 1
+      figure' = if shouldMoveRight then Set.map (\(x, y) -> (x + 1, y)) figure else figure
+   in game {figure = figure'}
