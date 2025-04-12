@@ -95,7 +95,24 @@ testStep =
                   }
           let expectedGround = Set.fromList [(0, 0)]
           actualResult <- step game
-          assertEqual "Should clean up the bottom row" expectedGround (ground actualResult)
+          assertEqual "Should clean up the bottom row" expectedGround (ground actualResult),
+        TestCase $ do
+          let game =
+                TetrisGame
+                  { screenWidth = 3,
+                    screenHeight = 201,
+                    figure = Set.fromList [(0, 200)],
+                    ground =
+                      Set.fromList $
+                        mconcat
+                          [ [(0, 2)],
+                            [(0, 1), (1, 1), (2, 1)],
+                            [(0, 0), (1, 0)]
+                          ]
+                  }
+          let expectedGround = Set.fromList [(0, 0), (1, 0), (0, 1)]
+          actualResult <- step game
+          assertEqual "Should clean up the not just the bottom row" expectedGround (ground actualResult)
       ]
 
 testUI :: Test

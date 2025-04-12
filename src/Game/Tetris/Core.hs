@@ -31,6 +31,7 @@ newFigure TetrisGame {screenHeight, screenWidth} = do
   let figures' = figures screenHeight screenWidth
   (figures' !!) <$> randomRIO (0, length figures' - 1)
 
+-- TODO: when ground reaches the top, game over
 step :: TetrisGame -> IO TetrisGame
 step game@TetrisGame {figure, ground} = do
   let shouldMoveDown = minimum (Set.map snd figure) > 0 && hasNothingUnderFigure game
@@ -47,13 +48,12 @@ hasNothingUnderFigure (TetrisGame {figure, ground}) =
   let figurePoints = Set.map (\(x, y) -> (x, y - 1)) figure
    in Set.null (Set.intersection figurePoints ground)
 
--- TODO: Cleanup not the bottom row, but every row that is full
 cleanUpBottomRow :: TetrisGame -> TetrisGame
-cleanUpBottomRow g@(TetrisGame {screenWidth, ground}) =
-  let canClean = all (\x -> Set.member (x, 0) ground) [0 .. screenWidth - 1]
-   in if canClean
-        then cleanUpBottomRow (g {ground = Set.map (\(x, y) -> (x, y - 1)) (Set.filter (\(_, y) -> y > 0) ground)})
-        else g
+cleanUpBottomRow game@(TetrisGame {screenWidth, ground, screenHeight}) =
+  let ys = [0 .. screenHeight - 1]
+   in case filter (\y -> all (\x -> Set.member (x, y) ground) [0 .. screenWidth - 1]) ys of
+        [] -> game
+        (y : _) -> cleanUpBottomRow (game {ground = Set.map (\(x, y') -> (x, if y' > y then y' - 1 else y')) (Set.filter (\(_, y') -> y' /= y) ground)})
 
 rotate :: Set.Set Point -> Set.Set Point
 rotate pts =
