@@ -23,7 +23,9 @@ figures height width =
         Set.fromList [(midX - 1, topY), (midX, topY), (midX + 1, topY), (midX, topY - 1)],
         Set.fromList [(midX - 1, topY), (midX, topY), (midX + 1, topY - 1), (midX, topY - 1)],
         Set.fromList [(midX + 1, topY), (midX, topY), (midX + 1, topY - 1), (midX, topY - 1)],
-        Set.fromList [(midX + 1, topY), (midX, topY), (midX - 1, topY - 1), (midX, topY - 1)]
+        Set.fromList [(midX + 1, topY), (midX, topY), (midX - 1, topY - 1), (midX, topY - 1)],
+        Set.fromList [(midX, topY), (midX + 1, topY), (midX + 2, topY), (midX + 2, topY - 1)],
+        Set.fromList [(midX, topY), (midX + 1, topY), (midX + 2, topY), (midX, topY - 1)]
       ]
 
 newFigure :: TetrisGame -> IO (Set.Set Point)
